@@ -46,7 +46,7 @@ copy-relese-binaries:
 .PHONY: test
 test:
 	RUSTFLAGS="-Dwarnings" cargo test
-	$(MAKE) test-features test-langs test-default-config assert-version-tag test-envs-match-flags
+	$(MAKE) test-features test-langs test-default-config assert-version-tag test-envs-match-flags test-stdin-matches-file
 
 FEATURES := $(shell grep "/// {n}   \* [a-z-]* => " src/cfg.rs | awk '{print $$4}' | tr '\n' ',' | sed 's/,$$//')
 
@@ -54,6 +54,16 @@ FEATURES := $(shell grep "/// {n}   \* [a-z-]* => " src/cfg.rs | awk '{print $$4
 test-features:
 	[[ -n "$(FEATURES)" ]]
 	RUSTFLAGS="-Dwarnings" cargo run -- --features="$(FEATURES)" <<< "markdown"
+
+.PHONY: test-stdin-matches-file
+test-stdin-matches-file:
+	# Formatting text from stdin must give the same bytes as formatting the same text in a file,
+	# including the final newline character.
+	tmp=$$(mktemp -d) && trap 'rm -rf "$${tmp}"' EXIT && \
+	printf 'First sentence. Second sentence.\n' > "$${tmp}/file.md" && \
+	RUSTFLAGS="-Dwarnings" cargo run -- --mode=format < "$${tmp}/file.md" > "$${tmp}/stdout.md" && \
+	RUSTFLAGS="-Dwarnings" cargo run -- --mode=format "$${tmp}/file.md" && \
+	cmp "$${tmp}/stdout.md" "$${tmp}/file.md"
 
 .PHONY: assert-version-tag
 assert-version-tag:

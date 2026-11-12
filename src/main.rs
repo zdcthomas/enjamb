@@ -182,7 +182,7 @@ where
     F: Fn(&str, &PathBuf) -> Result<cfg::PerFileCfg>,
 {
     log::debug!("processing content from stdin and writing to stdout");
-    let text = fs::read_stdin();
+    let text = fs::read_stdin()?;
 
     let config = build_cfg(&text, file_path).context("failed to build complete config")?;
 

@@ -89,13 +89,14 @@ pub fn find_files_with_extension(paths: &[PathBuf], extension: &str) -> Result<H
     }
 }
 
-pub fn read_stdin() -> String {
-    std::io::stdin()
-        .lines()
-        // Interrupt as soon as one line could not be read.
-        .map_while(Result::ok)
-        .collect::<Vec<_>>()
-        .join("\n")
+pub fn read_stdin() -> Result<String> {
+    read_stdin_from(std::io::stdin())
+}
+
+// Read everything at once, the same way get_file_content_and_dir reads a file. That way, stdin
+// content keeps its final newline character and invalid UTF-8 is an error, like for files.
+fn read_stdin_from(reader: impl std::io::Read) -> Result<String> {
+    std::io::read_to_string(reader).context("failed to read stdin")
 }
 
 pub fn get_file_content_and_dir(path: &Path) -> Result<(String, PathBuf)> {
@@ -339,5 +340,36 @@ mod test {
         assert_eq!(dirs, expected);
 
         Ok(())
+    }
+
+    #[test]
+    fn reading_stdin_matches_reading_file() -> Result<()> {
+        let tmp = TempDir::new()?;
+        let inputs = [
+            "",
+            "no final newline.",
+            "final newline.\n",
+            "several final newlines.\n\n\n",
+            "\nleading newline.\nlast line.\n",
+            "windows line endings.\r\nlast line.\r\n",
+        ];
+
+        for input in inputs {
+            let path = tmp.new_file_in_dir_with_content("file.md".into(), input)?;
+            let (from_file, _) = get_file_content_and_dir(&path)?;
+            let from_stdin = read_stdin_from(input.as_bytes())?;
+
+            assert_eq!(from_stdin, from_file, "input: {:?}", input);
+            assert_eq!(from_stdin, input);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn reading_invalid_utf8_from_stdin_fails() {
+        // The invalid byte is not on the first line, which must not hide it.
+        let is_err = read_stdin_from(&b"valid line.\n\xff invalid line.\n"[..]).is_err();
+        assert!(is_err);
     }
 }
