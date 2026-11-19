@@ -1,8 +1,8 @@
 SHELL := /bin/bash -euo pipefail
 
 SRC := $(shell find src -name "*.rs")
-TARGET_DEV := target/debug/mdslw
-TARGET_PROD := target/x86_64-unknown-linux-musl/release/mdslw
+TARGET_DEV := target/debug/enjamb
+TARGET_PROD := target/x86_64-unknown-linux-musl/release/enjamb
 
 default: build-dev
 
@@ -39,9 +39,9 @@ build-prod-all:
 copy-relese-binaries:
 	rm -rf ./dist
 	mkdir -p ./dist
-	cp target/x86_64-unknown-linux-musl/release/mdslw ./dist/mdslw_x86_64-unknown-linux-musl
-	cp target/armv7-unknown-linux-gnueabihf/release/mdslw ./dist/mdslw_armv7-unknown-linux-gnueabihf
-	cp target/x86_64-pc-windows-gnu/release/mdslw.exe ./dist/mdslw_x86_64-pc-windows-gnu.exe
+	cp target/x86_64-unknown-linux-musl/release/enjamb ./dist/enjamb_x86_64-unknown-linux-musl
+	cp target/armv7-unknown-linux-gnueabihf/release/enjamb ./dist/enjamb_armv7-unknown-linux-gnueabihf
+	cp target/x86_64-pc-windows-gnu/release/enjamb.exe ./dist/enjamb_x86_64-pc-windows-gnu.exe
 
 .PHONY: test
 test:
@@ -67,7 +67,7 @@ test-stdin-matches-file:
 
 .PHONY: assert-version-tag
 assert-version-tag:
-	# Extract tag and compare it to the version known by mdslw. When not run on a
+	# Extract tag and compare it to the version known by enjamb. When not run on a
 	# tag, this target checks that the version known by the tool is not identical
 	# to any existing tag. When run on a tag, it checks that the version known is
 	# identical to the current tag.

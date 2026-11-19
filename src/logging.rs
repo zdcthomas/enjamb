@@ -150,7 +150,7 @@ mod test {
         let metadata = Metadata::builder().level(Level::Error).build();
         let record = Record::builder()
             .metadata(metadata)
-            .module_path_static(Some("mdslw::test"))
+            .module_path_static(Some("enjamb::test"))
             .file_static(Some("test_file"))
             .args(args)
             .build();
@@ -164,7 +164,7 @@ mod test {
         // it.
         assert!(msg.starts_with("ERROR: 0s"), "incorrect start: {}", msg);
         assert!(
-            msg.ends_with("ms mdslw::test:test_file:0: some thing"),
+            msg.ends_with("ms enjamb::test:test_file:0: some thing"),
             "incorrect end: {}",
             msg
         );

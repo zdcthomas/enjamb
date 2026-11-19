@@ -1,3 +1,12 @@
+# enjamb
+
+enjamb is Zach Thomas's fork of [mdslw](https://github.com/razziel89/mdslw) by
+razziel89. It adds fixes that upstream does not have yet: reading from stdin
+keeps the final newline. The binary is `enjamb`. To stay compatible with
+mdslw, the `.mdslw.toml` config file, the `mdslw-toml` frontmatter key, the
+`mdslw-ignore-start` and `mdslw-ignore-end` comments and the `MDSLW_*`
+environment variables keep their names. The rest of this README is upstream's.
+
 ## Prepare your markdown for easy diff'ing!
 
 <!-- vim-markdown-toc GFM -->

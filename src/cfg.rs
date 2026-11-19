@@ -206,7 +206,7 @@ pub struct CliArgs {
     #[arg(short, long, env = "MDSLW_IGNORES", default_value = "\u{200b}")]
     pub ignores: ValueWOrigin<String>,
     /// Specify an upstream auto-formatter that reads from stdin and writes to stdout.
-    /// {n}   It will be called before mdslw will run. Useful if you want to chain multiple
+    /// {n}   It will be called before enjamb will run. Useful if you want to chain multiple
     /// tools.{n}   Specify the command that will be executed. For example, specify "prettier"
     /// to{n}   call prettier first.
     /// The upstream auto-formatter runs in each file's directory if PATHS are{n}   specified.
